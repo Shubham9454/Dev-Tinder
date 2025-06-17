@@ -1,0 +1,21 @@
+{
+  "name": "namaste-dev",
+  "version": "1.0.0",
+  "description": "Dev Tinder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Node.js",
+    "JavaScript",
+    "Express.js",
+    "Rest",
+    "APIs"
+  ],
+  "author": "Shubham Yadav",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
