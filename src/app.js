@@ -6,6 +6,8 @@ const port = 7777;
 
 const User = require("./models/user");
 
+const {validatingUserInfo} = require("./Utils/validation");
+
 // conversion of JSON data into JavaScript Object
 app.use(express.json());
 
@@ -14,12 +16,17 @@ app.post("/signup", async (req, res, next) => {
   const user = new User(req.body);
 
   try {
+    // user data validation
+    validatingUserInfo(req);
+
+    // encrypt user password
+
     await user.save();
 
     console.log(req.body);
     res.send("Your account is created with username");
   } catch (error) {
-    res.status(401).send("Something went wrong with error:" + error.message);
+    res.status(401).send("Something went wrong with error: " + error.message);
   }
 });
 
