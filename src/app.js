@@ -6,25 +6,23 @@ const port = 7777;
 
 const User = require("./models/user");
 
-const {validatingUserInfo} = require("./Utils/validation");
-
 const bcrypt = require("bcrypt");
+
+const { validatingUserInfo, validatingEmailID } = require("./Utils/validation");
 
 // conversion of JSON data into JavaScript Object
 app.use(express.json());
 
 // SignUp API- making the entries of new user in database
 app.post("/signup", async (req, res, next) => {
-
   try {
-
     // user data validation
     validatingUserInfo(req);
 
-    const {firstName, lastName, emailID, password} = req.body;
+    const { firstName, lastName, emailID, password } = req.body;
 
     // encrypt user password
-    const passwordHash = await bcrypt.hash(password , 5);
+    const passwordHash = await bcrypt.hash(password, 5);
     console.log(passwordHash);
 
     const user = new User({
@@ -40,6 +38,30 @@ app.post("/signup", async (req, res, next) => {
     res.send("Your account is created with username");
   } catch (error) {
     res.status(401).send("Something went wrong with error: " + error.message);
+  }
+});
+
+// Login API
+app.post("/login", async (req, res) => {
+
+  try {
+    const { emailID, password } = req.body;
+
+    validatingEmailID(emailID);
+
+    const userData = await User.findOne({ emailID: emailID });
+
+    if (!userData) throw new Error("Invalid Credentials");
+
+    const userPassword = await bcrypt.compare(password, userData.password);
+
+    if (!userPassword) throw new Error("Invalid Credentials");
+    else {
+      console.log(userPassword);
+      res.send("Login successful!");
+    }
+  } catch (err) {
+    res.status(400).send("Something went wrong with error: " + err.message);
   }
 });
 
@@ -86,16 +108,16 @@ app.patch("/update/:userID", async (req, res) => {
   const userid = req.params?.userID;
   const data = req.body;
   const userSkills = req.body.skills;
-  
+
   try {
     const allowedUpdates = [
-    "lastName",
-    "password",
-    "age",
-    "gender",
-    "about",
-    "skills",
-  ];
+      "lastName",
+      "password",
+      "age",
+      "gender",
+      "about",
+      "skills",
+    ];
     const isUpdateAllowed = Object.keys(data).every((k) => {
       return allowedUpdates.includes(k);
     });
@@ -104,7 +126,7 @@ app.patch("/update/:userID", async (req, res) => {
       throw new Error("This field is not allowed to update");
     }
 
-    if(userSkills.length > 5){
+    if (userSkills.length > 5) {
       throw new Error("Your skills exceeds the limit");
     }
 

@@ -14,4 +14,10 @@ const validatingUserInfo = (req) => {
   }
 };
 
-module.exports = {validatingUserInfo};
+const validatingEmailID = (emailID) => {
+  if(!validator.isEmail(emailID)){
+    throw new Error("Please Enter Valid email address");
+  }
+};
+
+module.exports = {validatingUserInfo , validatingEmailID};
