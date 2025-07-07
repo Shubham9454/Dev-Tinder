@@ -8,18 +8,31 @@ const User = require("./models/user");
 
 const {validatingUserInfo} = require("./Utils/validation");
 
+const bcrypt = require("bcrypt");
+
 // conversion of JSON data into JavaScript Object
 app.use(express.json());
 
 // SignUp API- making the entries of new user in database
 app.post("/signup", async (req, res, next) => {
-  const user = new User(req.body);
 
   try {
+
     // user data validation
     validatingUserInfo(req);
 
+    const {firstName, lastName, emailID, password} = req.body;
+
     // encrypt user password
+    const passwordHash = await bcrypt.hash(password , 5);
+    console.log(passwordHash);
+
+    const user = new User({
+      firstName,
+      lastName,
+      emailID,
+      password: passwordHash,
+    });
 
     await user.save();
 
