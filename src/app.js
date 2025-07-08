@@ -10,8 +10,14 @@ const bcrypt = require("bcrypt");
 
 const { validatingUserInfo, validatingEmailID } = require("./Utils/validation");
 
+const cookieParser = require("cookie-parser");
+
+const jwt = require("jsonwebtoken");
+
 // conversion of JSON data into JavaScript Object
 app.use(express.json());
+
+app.use(cookieParser());
 
 // SignUp API- making the entries of new user in database
 app.post("/signup", async (req, res, next) => {
@@ -57,13 +63,48 @@ app.post("/login", async (req, res) => {
 
     if (!userPassword) throw new Error("Invalid Credentials");
     else {
-      console.log(userPassword);
-      res.send("Login successful!");
+
+      // Creating a JWT token
+      const token = await jwt.sign({_id: userData._id} , "Shubham@123");
+      // console.log("Token generated with value: " + token);
+
+      res.cookie("token" , token);
+      res.send("Login successful !");
     }
   } catch (err) {
     res.status(400).send("Something went wrong with error: " + err.message);
   }
 });
+
+// profile API
+app.get("/profile" , async (req , res) =>{
+
+  try{
+
+  const cookies = req.cookies;
+
+  const {token} = cookies;
+
+  if(!token) throw new Error("Please login before use");
+
+  // validate the cookie
+  const decodedMsg = await jwt.verify(token , "Shubham@123");
+  //console.log(decodedMsg);
+
+  const {_id} = decodedMsg;
+  //console.log("Loged in user details: " + _id);
+
+  const logedUser = await User.findById(_id);
+
+  if(!logedUser) throw new Error("User does not found !");
+
+  res.send(logedUser);
+
+  }
+  catch(err){
+    res.status(400).send("Something went wrong");
+  }
+})
 
 // Accessing the data of single user with emailID
 app.get("/user", async (req, res) => {
