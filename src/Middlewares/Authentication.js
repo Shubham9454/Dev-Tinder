@@ -1,15 +1,27 @@
-const adminAuthentication = (req, res, next) => {
-  console.log("Middleware checks the authorization of user");
+const jwt = require("jsonwebtoken");
 
-  // checking the authorization of user before sending the data
-  const token = "abcd";
-  const isAuthorized = token === "abcd";
+const userModel = require("../models/user.js");
 
-  if (isAuthorized) {
+const userAuthentication = async (req, res, next) => {
+  try {
+
+    const { token } = req.cookies;
+    if(!token) throw new Error("Please Login with credentials");
+
+    const decodedMsg = jwt.verify(token, "Shubham@123");
+
+    const { _id } = decodedMsg;
+
+    const user = await userModel.findById(_id);
+
+    if(!user) throw new Error("Please create the Account");
+
+    req.user = user;
     next();
-  } else {
-    res.status(401).send("Unauthorized access");
   }
-}
+  catch (err) {
+    res.status(400).send("Something went wrong !");
+  }
+};
 
-module.exports = {adminAuthentication};
+module.exports = { userAuthentication };
