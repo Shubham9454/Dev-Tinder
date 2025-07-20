@@ -1,24 +1,25 @@
--------> List of APIs in DevTinder Application
+# List of APIs in DevTinder Application
 
 
---> Auth Router
+## Auth Router
 - POST / signup
 - POST / login
 - POST / logOut
 
---> Profile Router
+## Profile Router
 - GET / profile/data
 - PATCH / profile/update
 - DELETE / profile/delete
 - GET / profile/settings
 - PATCH / profile/settings/update
 
--> Connection Request
+## Connection Request Router
 - POST / request/send/interested/: userID
 - POST / request/send/ignored/: userID
 - POST / request/review/accepted/: requestID
 - POST / request/review/rejected/: requestID
 
+## User Router
 - GET / user/connections
 - GET / user/request
 - GET / user/feed

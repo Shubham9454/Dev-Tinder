@@ -15,14 +15,15 @@ const authRouter = require("./routes/auth");
 
 const profileRouter = require("./routes/profile");
 
-const feedRouter = require("./routes/feed");
+const userRouter = require("./routes/user");
 
 const connectionReqRouter = require("./routes/connection");
 
 app.use("/" , authRouter);
 app.use("/" , connectionReqRouter);
-app.use("/" , feedRouter);
 app.use("/" , profileRouter);
+app.use("/" , userRouter);
+
 
 // connecting with database
 const connectDB = require("./Config/database");

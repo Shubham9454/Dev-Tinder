@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const userModel = require("../models/user.js");
+const userModel = require("../models/userSchema.js");
 
 const userAuthentication = async (req, res, next) => {
   try {
@@ -20,7 +20,7 @@ const userAuthentication = async (req, res, next) => {
     next();
   }
   catch (err) {
-    res.status(400).send("Something went wrong !");
+    res.status(400).send("Something went wrong with error: " + err.message);
   }
 };
 

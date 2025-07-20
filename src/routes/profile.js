@@ -6,8 +6,12 @@ const User = require("../models/user");
 
 const {userAuthentication} = require("../Middlewares/Authentication");
 
+const {validateEditableData} = require("../Utils/validation");
+
+const bcrypt = require("bcrypt");
+
 // profile API
-profileRouter.get("/profile" , userAuthentication, async (req , res) =>{
+profileRouter.get("/profile/view" , userAuthentication, async (req , res) =>{
 
   try{
 
@@ -22,7 +26,7 @@ profileRouter.get("/profile" , userAuthentication, async (req , res) =>{
 });
 
 // delete a data by using _id
-profileRouter.delete("/delete", async (req, res) => {
+profileRouter.delete("/profile/delete", async (req, res) => {
   const userID = req.body.id;
 
   try {
@@ -36,42 +40,61 @@ profileRouter.delete("/delete", async (req, res) => {
 });
 
 // updating an existing data
-profileRouter.patch("/update/:userID", async (req, res) => {
-  const userid = req.params?.userID;
-  const data = req.body;
-  const userSkills = req.body.skills;
+profileRouter.patch("/profile/edit/:userID", userAuthentication , async (req, res) => {
 
   try {
-    const allowedUpdates = [
-      "lastName",
-      "password",
-      "age",
-      "gender",
-      "about",
-      "skills",
-    ];
-    const isUpdateAllowed = Object.keys(data).every((k) => {
-      return allowedUpdates.includes(k);
-    });
+    
+    validateEditableData(req);
 
-    if (!isUpdateAllowed) {
-      throw new Error("This field is not allowed to update");
-    }
+    const loggedInUser = req.user;
 
-    if (userSkills.length > 5) {
-      throw new Error("Your skills exceeds the limit");
-    }
+    Object.keys(req.body).forEach((key) =>{
 
-    const user = await User.findByIdAndUpdate(userid, data, {
-      returnDocument: "after",
-      runValidators: true,
-    });
+      loggedInUser[key] = req.body[key]
+  });
+    
+    await loggedInUser.save();
 
-    console.log(user);
-    res.send("Data updated successfully");
+    res.json({
+      message: loggedInUser.firstName + "'s profile updated successfully !!",
+      data: loggedInUser
+  });
   } catch (err) {
     res.status(400).send("Something Went Wrong with error:" + err.message);
   }
+});
+
+// profile/changePassword API for forgot password
+profileRouter.patch("/profile/changePassword" , userAuthentication , async (req , res) =>{
+
+  try{
+
+  const user = req.user;
+
+  const oldPassword = req.body.password;
+  const newPassword = req.body.newPassword;
+  const confirmPassword = req.body.confirmPassword;
+
+  //console.log(newPassword);
+  const checkPassword = await user.validatePassword(oldPassword);
+
+  if(!checkPassword) throw new Error("Invalid credentials");
+
+  if(newPassword === confirmPassword){
+
+    const passwordHash = await bcrypt.hash(newPassword , 5);
+    const newData = await User.findByIdAndUpdate(user._id , {password: passwordHash});
+    res.json({
+    message: "Password changed successfully !!",
+    data: newData
+  });  
+  }else throw new Error("Confirm password doen't match with new password");
+
+  }
+  catch(err){
+    res.status(400).send("Something went wrong with error: " + err.message);
+  }
+
 });
 
 module.exports = profileRouter;

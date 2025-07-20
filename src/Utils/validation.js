@@ -20,4 +20,31 @@ const validatingEmailID = (emailID) => {
   }
 };
 
-module.exports = {validatingUserInfo , validatingEmailID};
+const validateEditableData = (req) =>{
+
+  const data = req.body;
+  const userSkills = data.skills;
+
+  const allowedUpdates = [
+      "firstName",
+      "lastName",
+      "password",
+      "age",
+      "gender",
+      "about",
+      "skills",
+    ];
+    const isUpdateAllowed = Object.keys(data).every((k) => {
+      return allowedUpdates.includes(k);
+    });
+
+    if (!isUpdateAllowed) {
+      throw new Error("This field is not allowed to update");
+    }
+
+    if (userSkills.length > 5) {
+      throw new Error("Your skills exceeds the limit");
+    }
+}
+
+module.exports = {validatingUserInfo , validatingEmailID , validateEditableData};
