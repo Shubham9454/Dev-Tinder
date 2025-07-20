@@ -2,7 +2,7 @@ const express = require("express");
 
 const profileRouter = express.Router();
 
-const User = require("../models/user");
+const User = require("../models/userSchema");
 
 const {userAuthentication} = require("../Middlewares/Authentication");
 

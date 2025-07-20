@@ -58,6 +58,7 @@ connectionReqRouter.post("/request/send/:status/:toUserId" , userAuthentication 
   }
 });
 
+// 
 connectionReqRouter.post("/request/review/:status/:requestId" , userAuthentication , async (req , res) =>{
 
   try{
@@ -74,7 +75,7 @@ connectionReqRouter.post("/request/review/:status/:requestId" , userAuthenticati
     const checkConnectionReq = await connectionModel.findOne({
       _id: requestId,
       toUserId: loggedInUser._id,
-      status: "accepted"
+      status: "interested"
     });
 
     if(!checkConnectionReq) throw new Error("Invalid connection request !!");
