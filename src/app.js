@@ -6,6 +6,10 @@ const cookieParser = require("cookie-parser");
 
 const jwt = require("jsonwebtoken");
 
+const cors = require("cors");
+
+app.use(cors);
+
 // conversion of JSON data into JavaScript Object
 app.use(express.json());
 

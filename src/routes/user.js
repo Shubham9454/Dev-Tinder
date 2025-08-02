@@ -1,6 +1,9 @@
 const express = require("express");
 const { userAuthentication } = require("../Middlewares/Authentication");
 const connectionModel = require("../models/connectionSchema");
+const User = require("../models/userSchema");
+
+const SAFE_USER_INFO = ["firstName" , "lastName" , "about" , "skills" , "age"];
 
 const userRouter = express.Router();
 
@@ -64,7 +67,49 @@ userRouter.get("/user/connections" , userAuthentication , async (req , res) =>{
   }
 })
 
+userRouter.get("/user/feed" , userAuthentication , async (req , res) =>{
 
+  try{
+
+    const pageNum = parseInt(req.query.page) || 1;
+    let limitRec = parseInt(req.query.limit) || 10;
+
+    limitRec = limitRec > 20 ? 20 : limitRec;
+
+    const skipPages = (pageNum - 1) * limitRec;
+
+
+    const loggedInUser = req.user;
+
+    const userConnectionsData = await connectionModel.find({
+      $or: [
+        {fromUserId: loggedInUser._id} , 
+        {toUserId: loggedInUser._id}
+      ]
+    }).select("fromUserId toUserId");
+
+    const hideUsersFromFeed = new Set();
+
+    userConnectionsData.forEach((row) =>{
+      hideUsersFromFeed.add(row.fromUserId.toString());
+      hideUsersFromFeed.add(row.toUserId.toString());
+    });
+
+    const feedInfo = await User.find({
+      $and:[
+        {_id: {$nin: Array.from(hideUsersFromFeed)} },
+        {_id: {$ne: loggedInUser._id}}
+      ]}).select(SAFE_USER_INFO).skip(skipPages).limit(limitRec);  // implementing pagination
+
+    res.json({
+      message: "Your connection details:",
+      data: feedInfo
+    })
+
+  }catch(err){
+    res.status(400).json({message: err.message});
+  }
+})
 
 module.exports = userRouter;
 
