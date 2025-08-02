@@ -8,7 +8,10 @@ const jwt = require("jsonwebtoken");
 
 const cors = require("cors");
 
-app.use(cors);
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 // conversion of JSON data into JavaScript Object
 app.use(express.json());
