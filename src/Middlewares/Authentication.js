@@ -6,7 +6,7 @@ const userAuthentication = async (req, res, next) => {
   try {
 
     const { token } = req.cookies;
-    if(!token) throw new Error("Please Login with credentials");
+    if(!token) return res.status(401).send("Please Login with credentials");
 
     const decodedMsg = jwt.verify(token, "Shubham@123");
 
