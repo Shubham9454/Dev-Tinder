@@ -51,8 +51,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "This is about section"
   },
-  profile: {
-    type: String
+  photoURL: {
+    type: String,
+    default: "https://geographyandyou.com/images/user-profile.png",
+    validate(value){
+      if(!validator.isURL(value)) throw new Error("Invalid Photo URL:", value);
+    }
   },
   skills: {
     type: [String]
@@ -64,7 +68,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.methods.getJWT = async function(){
   const user = this;
-  const token = await JWT.sign({_id: this._id} , "Shubham@123" , {expiresIn: '3h'});
+  const token = await JWT.sign({_id: this._id} , "Shubham@123" , {expiresIn: '1h'});
   return token;
 }
 

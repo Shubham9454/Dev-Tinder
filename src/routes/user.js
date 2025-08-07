@@ -3,7 +3,7 @@ const { userAuthentication } = require("../Middlewares/Authentication");
 const connectionModel = require("../models/connectionSchema");
 const User = require("../models/userSchema");
 
-const SAFE_USER_INFO = ["firstName" , "lastName" , "about" , "skills" , "age"];
+const SAFE_USER_INFO = ["firstName" , "lastName" , "age" , "gender" , "about" , "photoURL" , "skills"];
 
 const userRouter = express.Router();
 
