@@ -40,7 +40,7 @@ profileRouter.delete("/profile/delete", async (req, res) => {
 });
 
 // updating an existing data
-profileRouter.patch("/profile/edit/:userID", userAuthentication , async (req, res) => {
+profileRouter.patch("/profile/edit", userAuthentication , async (req, res) => {
 
   try {
     
