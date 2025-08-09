@@ -32,6 +32,7 @@ const validateEditableData = (req) =>{
       "age",
       "gender",
       "about",
+      "photoURL",
       "skills",
     ];
     const isUpdateAllowed = Object.keys(data).every((k) => {
