@@ -17,7 +17,7 @@ userRouter.get("/user/requests/received" , userAuthentication , async (req , res
     const reqData = await connectionModel.find({
       toUserId: loggedInUser._id,
       status: "interested"
-    }).populate("fromUserId" , ["firstName" , "lastName"]);
+    }).populate("fromUserId" , ["firstName" , "lastName" , "photoURL"]);
 
     if(reqData.length === 0) return res.send("You have no pending connection request.");
 
@@ -42,8 +42,8 @@ userRouter.get("/user/connections" , userAuthentication , async (req , res) =>{
       $or: [
         { toUserId: loggedInUser._id, status: "accepted"},
         {fromUserId: loggedInUser._id, status: "accepted"}
-    ]}).populate("fromUserId" , ["firstName" , "lastName"])
-       .populate("toUserId" , ["firstName" , "lastName"]);
+    ]}).populate("fromUserId" , SAFE_USER_INFO)
+       .populate("toUserId" , SAFE_USER_INFO);
 
     if(connectionData.length == 0) {
       res.send("You have no connections");
