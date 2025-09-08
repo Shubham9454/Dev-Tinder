@@ -24,6 +24,7 @@ const validateEditableData = (req) =>{
 
   const data = req.body;
   const userSkills = data.skills;
+  console.log(userSkills);
 
   const allowedUpdates = [
       "firstName",
@@ -43,9 +44,12 @@ const validateEditableData = (req) =>{
       throw new Error("This field is not allowed to update");
     }
 
-    if (userSkills.length > 5) {
-      throw new Error("Your skills exceeds the limit");
-    }
+    console.log(userSkills.length);
+    console.log(typeof(userSkills))
+
+    // if (userSkills.length > 5) {
+    //   throw new Error("Your skills exceeds the limit");
+    // }
 }
 
 module.exports = {validatingUserInfo , validatingEmailID , validateEditableData};
