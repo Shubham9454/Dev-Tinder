@@ -29,8 +29,18 @@ authRouter.post("/signup", async (req, res, next) => {
 
     await user.save();
 
+    if(user){
+      const token = await user.getJWT();
+      // console.log("Token generated with value: " + token);
+
+      res.cookie("token" , token);
+      res.json({
+        message: `${user.firstName} your account is created successfully !` , 
+        data: user
+      });
+    }
+
     console.log(req.body);
-    res.send("Your account is created with username");
   } catch (error) {
     res.status(401).send("Something went wrong with error: " + error.message);
   }
