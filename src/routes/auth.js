@@ -4,7 +4,10 @@ const authRouter = express.Router();
 
 const User = require("../models/userSchema");
 
-const { validatingUserInfo, validatingEmailID } = require("../Utils/validation");
+const {
+  validatingUserInfo,
+  validatingEmailID,
+} = require("../Utils/validation");
 
 const bcrypt = require("bcrypt");
 
@@ -29,14 +32,14 @@ authRouter.post("/signup", async (req, res, next) => {
 
     await user.save();
 
-    if(user){
+    if (user) {
       const token = await user.getJWT();
       // console.log("Token generated with value: " + token);
 
-      res.cookie("token" , token);
+      res.cookie("token", token);
       res.json({
-        message: `${user.firstName} your account is created successfully !` , 
-        data: user
+        message: `${user.firstName} your account is created successfully !`,
+        data: user,
       });
     }
 
@@ -48,7 +51,6 @@ authRouter.post("/signup", async (req, res, next) => {
 
 // Login API
 authRouter.post("/login", async (req, res) => {
-
   try {
     const { emailID, password } = req.body;
 
@@ -62,15 +64,19 @@ authRouter.post("/login", async (req, res) => {
 
     if (!userPassword) throw new Error("Invalid Credentials");
     else {
-
       // Creating a JWT token
       const token = await userData.getJWT();
       // console.log("Token generated with value: " + token);
 
-      res.cookie("token" , token);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true, // must be true in production (HTTPS)
+        sameSite: "none", // allow cross-site cookies (Vercel <-> Render)
+      });
+      
       res.json({
-        message: "Login Successful !" , 
-        data: userData
+        message: "Login Successful !",
+        data: userData,
       });
     }
   } catch (err) {
@@ -79,13 +85,11 @@ authRouter.post("/login", async (req, res) => {
 });
 
 // LogOut API
-authRouter.post("/logout" , async (req , res) =>{
+authRouter.post("/logout", async (req, res) => {
+  res.cookie("token", null, { expires: new Date(Date.now()) });
 
-  res.cookie("token" , null , {expires: new Date(Date.now())});
-  
   // Send a successful response.
   res.status(200).send("You are successfully Logged out !!");
 });
 
 module.exports = authRouter;
-
