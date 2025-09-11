@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://devtinder-ui-beige.vercel.app",
   credentials: true
 }));
 
@@ -40,7 +40,7 @@ connectDB()
   .then(() => {
     console.log("Database connection established");
 
-    const port = 7777;
+    const port = 10000;
 
     app.listen(port, () => {
       console.log("Server is listening on port no.", port);
