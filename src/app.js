@@ -26,6 +26,9 @@ const userRouter = require("./routes/user");
 
 const connectionReqRouter = require("./routes/connection");
 
+app.use("/" , (req , res) =>{
+  res.send("DevTinder Backend Server is running!!");
+});
 app.use("/" , authRouter);
 app.use("/" , connectionReqRouter);
 app.use("/" , profileRouter);
