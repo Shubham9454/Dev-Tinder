@@ -13,7 +13,7 @@ app.use(cors({
   credentials: true
 }));
 
-app.options("*", cors());
+//app.options("*", cors());
 
 // conversion of JSON data into JavaScript Object
 app.use(express.json());
