@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 
 app.use(cors({
-  origin: "https://devtinder-ui-ivory.vercel.app/",
+  origin: "https://devtinder-ui-ivory.vercel.app",
   credentials: true
 }));
 
