@@ -9,9 +9,11 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 
 app.use(cors({
-  origin: "https://devtinder-eve3hms0v-shubham9454s-projects.vercel.app",
+  origin: "https://devtinder-ui-ivory.vercel.app",
   credentials: true
 }));
+
+app.options("*", cors());
 
 // conversion of JSON data into JavaScript Object
 app.use(express.json());
