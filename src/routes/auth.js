@@ -36,7 +36,11 @@ authRouter.post("/signup", async (req, res, next) => {
       const token = await user.getJWT();
       // console.log("Token generated with value: " + token);
 
-      res.cookie("token", token);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true, // must be true in production (HTTPS)
+        sameSite: "none", // allow cross-site cookies (Vercel <-> Render)
+      });
       res.json({
         message: `${user.firstName} your account is created successfully !`,
         data: user,
